@@ -1,0 +1,44 @@
+{% if error_message %}
+<p>{{error_message}}</p>
+{% endif %}
+
+<form method="post" action="{% url 'api:create_task' %}">
+{% csrf_token %}
+<table>
+{%for field in form %}
+<tr>
+<td>
+{{field.label_tag}}
+</td>
+<td>
+{{field}}
+</td>
+</tr>
+{% endfor %}
+</table>
+<input type="submit" value="Change Task">
+</form>
+
+<p>The task used to be: </p>
+<table>
+{%for key, value in task.items %}
+<tr>
+<td>
+{{key.capitalize}}
+</td>
+<td>
+{% if key != "users" %}
+{{value}}
+{% else %}
+<ul>
+{% for usr in value %}
+<li>{{usr.username}}</li>
+{%endfor%}
+</ul>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+
+

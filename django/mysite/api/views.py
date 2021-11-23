@@ -12,6 +12,7 @@ from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.forms.models import model_to_dict
 
 from .models import Task
 from .forms import TaskForm
@@ -44,12 +45,33 @@ def create_task(request):
             task.save()
             task.users.set(users)
             task.save()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect(reverse('api:details', args=(task.id,)))
     else:
         form = TaskForm()
 
     return render(request, 'create_task_form.html', {'form': form})
-        
+
+def change_task(request, pk):
+    task = get_object_or_404(Task, id=pk)
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            users = form.cleaned_data.pop('users')
+            task.update(**form)
+            task.users.set(users)
+            task.save()
+            return HttpResponseRedirect(reverse('api:details', args=(task.id,)))
+        else:
+            task_dict = model_to_dict(task)
+            task_dict.pop('id')
+            return render(request, 'change_task_form.html', {'form': form, 'task': task_dict, 'error_message': 'Form was invalid'})
+    else:
+        form = TaskForm()
+    task_dict = model_to_dict(task)
+    task_dict.pop('id')
+    return render(request, 'change_task_form.html', {'form': form, 'task': task_dict})
+
+
 def create_user_form(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
