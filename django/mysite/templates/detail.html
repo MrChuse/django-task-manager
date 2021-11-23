@@ -1,0 +1,8 @@
+<h1>{{task.name}}</h1>
+<h3>{{task.details}}</h3>
+<ul>
+{% for t_user in task.users.all %}
+<li>{{ t_user.username }}</li>
+{% endfor %}
+</ul>
+<p><a href="/">Task list</a></p>

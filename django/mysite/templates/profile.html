@@ -1,0 +1,11 @@
+<h1>{{ user.username }}</h1>
+
+{% if object_list %}
+{% for task in object_list %}
+
+<h3><a href="{% url 'api:detail' task.id %}">{{task.name}}</a></h3>
+<p>{{ task.details }}</p>
+{% endfor %}
+
+{% endif %}
+<p><a href="/">Task list</a></p>

@@ -1,0 +1,17 @@
+<form method="post" action="{% url 'api:create_task' %}">
+{% csrf_token %}
+<table>
+{%for field in form %}
+<tr>
+<td>
+{{field.label_tag}}
+</td>
+<td>
+{{field}}
+</td>
+</tr>
+{% endfor %}
+</table>
+<input type="submit" value="Create Task">
+</form>
+
