@@ -7,12 +7,23 @@
 <p><a href="{% url 'api:create_task' %}">Create a task</a>
 {% endif %}
 
-{% if task_list %}
+{% if page_obj %}
+
+    {% if page_obj.has_previous %}
+        <p><a href="?page=1">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}">previous</a><p>
+    {% endif %}
+    {% if page_obj.has_next %}
+        <p><a href="?page={{ page_obj.next_page_number }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a><p>
+    {% endif %}
+
     <ul>
-    {% for task in task_list %}
+    {% for task in page_obj%}
         <li><a href="{% url 'api:detail' task.id %}">{{ task.name }}</a></li>
     {% endfor %}
     </ul>
+    
 {% else %}
     <p>No tasks are available.</p>
 {% endif %}

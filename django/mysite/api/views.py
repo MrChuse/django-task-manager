@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.db import IntegrityError
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
@@ -21,16 +22,18 @@ from .forms import UserForm
 
 class IndexView(generic.ListView):
     template_name = 'index.html'
+    paginate_by = 10
     def get_queryset(self):
         return Task.objects.order_by('-end_date')
     
 
 class ProfileView(generic.ListView):
     template_name = 'profile.html'
+    paginate_by = 10
     def get_queryset(self):
         req = self.request
         usr = req.user
-        return Task.objects.filter(users=self.request.user).order_by('-end_date')
+        return Task.objects.filter(Q(users=self.request.user) | Q(creator=self.request.user)).order_by('-end_date')
 
 class DetailView(generic.DetailView):
     model = Task

@@ -1,16 +1,22 @@
 <h1>{{ user.username }}</h1>
 
-{% if object_list %}
-{% for task in object_list %}
-
-<h2>
-    <a href="{% url 'api:detail' task.id %}">{{task.name}}</a> 
-    {% if task.creator.username == user.username %}
-    <a href="{% url 'api:change_task' task.id %}"> Edit</a> 
-    <a href="{% url 'api:delete_task' task.id %}"> Delete</a>
+{% if page_obj %}
+    {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
     {% endif %}
-</h2>
-
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+{% for task in page_obj%}
+    <h2>
+        <a href="{% url 'api:detail' task.id %}">{{task.name}}</a> 
+        {% if task.creator.username == user.username %}
+        <a href="{% url 'api:change_task' task.id %}"> Edit</a> 
+        <a href="{% url 'api:delete_task' task.id %}"> Delete</a>
+        {% endif %}
+    </h2>
 <p>{{ task.details }}</p>
 {% endfor %}
 
