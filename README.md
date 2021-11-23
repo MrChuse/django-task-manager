@@ -1,4 +1,4 @@
-# django-crud
+# django-tasj-manager
 ### Windows installation
 To install the dependencies use the following commands in the cmd or PowerShell
 ```
