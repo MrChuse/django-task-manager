@@ -3,7 +3,13 @@
 {% if object_list %}
 {% for task in object_list %}
 
-<h2><a href="{% url 'api:detail' task.id %}">{{task.name}}</a> <a href="{% url 'api:change_task' task.id%}"> Edit</a></h2>
+<h2>
+    <a href="{% url 'api:detail' task.id %}">{{task.name}}</a> 
+    {% if task.creator.username == user.username %}
+    <a href="{% url 'api:change_task' task.id %}"> Edit</a> 
+    <a href="{% url 'api:delete_task' task.id %}"> Delete</a>
+    {% endif %}
+</h2>
 
 <p>{{ task.details }}</p>
 {% endfor %}

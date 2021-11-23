@@ -41,11 +41,12 @@ def create_task(request):
         form = TaskForm(request.POST)
         if form.is_valid():
             users = form.cleaned_data.pop('users')
+            form.cleaned_data['creator'] = request.user
             task = Task(**form.cleaned_data)
             task.save()
             task.users.set(users)
             task.save()
-            return HttpResponseRedirect(reverse('api:details', args=(task.id,)))
+            return HttpResponseRedirect(reverse('api:detail', args=(task.id,)))
     else:
         form = TaskForm()
 
@@ -53,6 +54,8 @@ def create_task(request):
 
 def change_task(request, pk):
     task = get_object_or_404(Task, id=pk)
+    if request.user != task.creator:
+        return HttpResponseRedirect('/')
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -64,6 +67,7 @@ def change_task(request, pk):
         else:
             task_dict = model_to_dict(task)
             task_dict.pop('id')
+            form = TaskForm()
             return render(request, 'change_task_form.html', {'form': form, 'task': task_dict, 'error_message': 'Form was invalid'})
     else:
         form = TaskForm()
@@ -71,6 +75,12 @@ def change_task(request, pk):
     task_dict.pop('id')
     return render(request, 'change_task_form.html', {'form': form, 'task': task_dict})
 
+def delete_task(request, pk):
+    task = get_object_or_404(Task, id=pk)
+    if request.user != task.creator:
+        return HttpResponseRedirect('/')
+    task.delete()
+    return HttpResponseRedirect('/accounts/profile')
 
 def create_user_form(request):
     if request.method == 'POST':
