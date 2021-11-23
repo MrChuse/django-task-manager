@@ -33,7 +33,7 @@ class ProfileView(generic.ListView):
     def get_queryset(self):
         req = self.request
         usr = req.user
-        return Task.objects.filter(Q(users=self.request.user) | Q(creator=self.request.user)).order_by('-end_date')
+        return Task.objects.filter(Q(users=self.request.user) | Q(creator=self.request.user)).distinct().order_by('-end_date')
 
 class DetailView(generic.DetailView):
     model = Task
